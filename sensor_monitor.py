@@ -338,18 +338,14 @@ class SensorMonitorApp(QMainWindow):
                 background-color: #dee2e6;
             }
             QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-                border-left: 6px solid transparent;
-                border-right: 6px solid transparent;
-                border-bottom: 8px solid #495057;
-                width: 0px;
-                height: 0px;
+                image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSI1Ij48cG9seWdvbiBwb2ludHM9IjUsMCAxMCw1IDAsNSIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
+                width: 10px;
+                height: 5px;
             }
             QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-                border-left: 6px solid transparent;
-                border-right: 6px solid transparent;
-                border-top: 8px solid #495057;
-                width: 0px;
-                height: 0px;
+                image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSI1Ij48cG9seWdvbiBwb2ludHM9IjUsNSAxMCwwIDAsMCIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
+                width: 10px;
+                height: 5px;
             }
             QLabel {
                 color: #495057;

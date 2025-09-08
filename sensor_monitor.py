@@ -338,12 +338,12 @@ class SensorMonitorApp(QMainWindow):
                 background-color: #dee2e6;
             }
             QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-                image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSI1Ij48cG9seWdvbiBwb2ludHM9IjUsMCAxMCw1IDAsNSIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
+                image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDUgMCBMIDEwIDUgTCAwIDUgWiIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
                 width: 10px;
                 height: 5px;
             }
             QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-                image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSI1Ij48cG9seWdvbiBwb2ludHM9IjUsNSAxMCwwIDAsMCIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
+                image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDUgNSBMIDEwIDAgTCAwIDAgWiIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
                 width: 10px;
                 height: 5px;
             }

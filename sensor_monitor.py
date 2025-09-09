@@ -16,6 +16,101 @@ import pyvisa
 import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from PySide6.QtWidgets import QWidget, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtGui import QDoubleValidator
+
+
+class CustomDoubleSpinBox(QWidget):
+    """
+    A custom widget that mimics QDoubleSpinBox using a QLineEdit and two QPushButtons.
+    This is a workaround for environments where QSpinBox arrows do not render correctly.
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self._min = -1e9
+        self._max = 1e9
+        self._decimals = 2
+        self._step = 1.0
+        self._value = 0.0
+
+        self.line_edit = QLineEdit("0.0")
+        self.line_edit.setValidator(QDoubleValidator(self))
+
+        self.up_button = QPushButton("▲")
+        self.down_button = QPushButton("▼")
+
+        # Button styling and object names for targeting in stylesheet
+        self.up_button.setFixedSize(22, 17)
+        self.down_button.setFixedSize(22, 17)
+        self.up_button.setObjectName("spinbox_button_up")
+        self.down_button.setObjectName("spinbox_button_down")
+        self.line_edit.setObjectName("spinbox_lineedit")
+        self.setObjectName("custom_spinbox")
+
+        # Layout for buttons
+        button_layout = QVBoxLayout()
+        button_layout.addWidget(self.up_button)
+        button_layout.addWidget(self.down_button)
+        button_layout.setSpacing(0)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Main layout
+        main_layout = QHBoxLayout(self)
+        main_layout.addWidget(self.line_edit)
+        main_layout.addLayout(button_layout)
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(main_layout)
+
+        # Connections
+        self.up_button.clicked.connect(self._increment)
+        self.down_button.clicked.connect(self._decrement)
+        self.line_edit.textChanged.connect(self._text_changed)
+
+    def _update_text(self):
+        format_str = f"{{:.{self._decimals}f}}"
+        self.line_edit.blockSignals(True)
+        self.line_edit.setText(format_str.format(self._value))
+        self.line_edit.blockSignals(False)
+
+    def _increment(self):
+        self.setValue(self._value + self._step)
+
+    def _decrement(self):
+        self.setValue(self._value - self._step)
+
+    def _text_changed(self, text):
+        try:
+            val = float(text)
+            if self._min <= val <= self._max:
+                self._value = val
+        except ValueError:
+            # Revert to last known good value if input is invalid (e.g., empty or non-numeric)
+            self._update_text()
+
+    # --- Public API to mimic QDoubleSpinBox ---
+    def value(self) -> float:
+        return self._value
+
+    def setValue(self, val: float):
+        self._value = max(self._min, min(self._max, val))
+        self._update_text()
+
+    def setRange(self, min_val: float, max_val: float):
+        self._min = min_val
+        self._max = max_val
+        self.line_edit.setValidator(QDoubleValidator(min_val, max_val, self._decimals, self))
+        self.setValue(self._value)
+
+    def setDecimals(self, count: int):
+        self._decimals = count
+        self.line_edit.validator().setDecimals(count)
+        self._update_text()
+
+    def setSingleStep(self, step: float):
+        self._step = step
 
 
 class VISAManager:
@@ -283,7 +378,7 @@ class SensorMonitorApp(QMainWindow):
                 border-color: #6c757d;
                 color: #ffffff;
             }
-            QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
+            QLineEdit, QSpinBox, QComboBox {
                 padding: 6px;
                 border: 2px solid #ced4da;
                 border-radius: 4px;
@@ -291,7 +386,7 @@ class SensorMonitorApp(QMainWindow):
                 color: #495057;
                 selection-background-color: #007bff;
             }
-            QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
+            QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
                 border-color: #80bdff;
                 outline: none;
             }
@@ -398,6 +493,40 @@ class SensorMonitorApp(QMainWindow):
                 border-color: #007bff;
                 image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxNCAxNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjMzMzMgMy41TDUuMjUgOS41ODMzM0wyLjY2NjY3IDciIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=);
             }
+
+            /* Custom SpinBox Styling */
+            QLineEdit#spinbox_lineedit {
+                border: 2px solid #ced4da;
+                border-right: none;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                padding: 6px;
+                background-color: #ffffff;
+            }
+
+            QPushButton#spinbox_button_up, QPushButton#spinbox_button_down {
+                background-color: #f8f9fa;
+                border: 2px solid #ced4da;
+                border-left: 1px solid #ced4da;
+                padding: 0px 4px 0px 4px;
+                font-size: 9px;
+            }
+            QPushButton#spinbox_button_up:hover, QPushButton#spinbox_button_down:hover {
+                background-color: #e9ecef;
+            }
+            QPushButton#spinbox_button_up:pressed, QPushButton#spinbox_button_down:pressed {
+                background-color: #dee2e6;
+            }
+
+            QPushButton#spinbox_button_up {
+                border-bottom: none;
+                border-top-right-radius: 4px;
+            }
+
+            QPushButton#spinbox_button_down {
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 4px;
+            }
         """)
         
         central_widget = QWidget()
@@ -451,12 +580,12 @@ class SensorMonitorApp(QMainWindow):
         self.sensor_channel_edit = QLineEdit()
         self.sensor_command_edit = QLineEdit()
         self.sensor_unit_edit = QLineEdit("V")
-        self.sensor_scale_edit = QDoubleSpinBox()
+        self.sensor_scale_edit = CustomDoubleSpinBox()
         self.sensor_scale_edit.setRange(-1000, 1000)
         self.sensor_scale_edit.setValue(1.0)
         self.sensor_scale_edit.setDecimals(3)
         
-        self.sensor_offset_edit = QDoubleSpinBox()
+        self.sensor_offset_edit = CustomDoubleSpinBox()
         self.sensor_offset_edit.setRange(-1000, 1000)
         self.sensor_offset_edit.setValue(0.0)
         self.sensor_offset_edit.setDecimals(3)
@@ -490,10 +619,11 @@ class SensorMonitorApp(QMainWindow):
         
         freq_layout = QHBoxLayout()
         freq_layout.addWidget(QLabel("Frequency (Hz):"))
-        self.frequency_spinbox = QDoubleSpinBox()
+        self.frequency_spinbox = CustomDoubleSpinBox()
         self.frequency_spinbox.setRange(0.1, 1000)
         self.frequency_spinbox.setValue(1.0)
         self.frequency_spinbox.setDecimals(1)
+        self.frequency_spinbox.setSingleStep(0.1)
         freq_layout.addWidget(self.frequency_spinbox)
         acq_layout.addLayout(freq_layout)
         

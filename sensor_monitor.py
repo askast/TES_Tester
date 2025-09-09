@@ -16,6 +16,52 @@ import pyvisa
 import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from PySide6.QtWidgets import QProxyStyle, QStyle
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtGui import QPolygon, QColor
+
+
+class CustomSpinBoxStyle(QProxyStyle):
+    """Custom style to correctly draw spinbox arrows"""
+
+    def drawPrimitive(self, element: QStyle.PrimitiveElement, option,
+                      painter, widget=None):
+        """Override drawing for spinbox up and down indicators"""
+        if element == QStyle.PE_IndicatorSpinUp:
+            self.draw_arrow(painter, option.rect, is_up=True)
+            return
+
+        if element == QStyle.PE_IndicatorSpinDown:
+            self.draw_arrow(painter, option.rect, is_up=False)
+            return
+
+        super().drawPrimitive(element, option, painter, widget)
+
+    def draw_arrow(self, painter, rect, is_up=True):
+        """Draws a triangle arrow within the given rectangle"""
+        painter.save()
+
+        margin_h = rect.width() / 3
+        margin_v = rect.height() / 3
+
+        if is_up:
+            polygon = QPolygon([
+                QPoint(rect.center().x(), rect.top() + margin_v),
+                QPoint(rect.right() - margin_h, rect.bottom() - margin_v),
+                QPoint(rect.left() + margin_h, rect.bottom() - margin_v),
+            ])
+        else:
+            polygon = QPolygon([
+                QPoint(rect.center().x(), rect.bottom() - margin_v),
+                QPoint(rect.right() - margin_h, rect.top() + margin_v),
+                QPoint(rect.left() + margin_h, rect.top() + margin_v),
+            ])
+
+        painter.setBrush(QColor("#495057"))
+        painter.setPen(Qt.NoPen)
+        painter.drawPolygon(polygon)
+
+        painter.restore()
 
 
 class VISAManager:
@@ -336,16 +382,6 @@ class SensorMonitorApp(QMainWindow):
             }
             QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed {
                 background-color: #dee2e6;
-            }
-            QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-                image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDUgMCBMIDEwIDUgTCAwIDUgWiIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
-                width: 10px;
-                height: 5px;
-            }
-            QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-                image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDUgNSBMIDEwIDAgTCAwIDAgWiIgZmlsbD0iIzQ5NTA1NyIvPjwvc3ZnPg==);
-                width: 10px;
-                height: 5px;
             }
             QLabel {
                 color: #495057;

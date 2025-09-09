@@ -510,6 +510,7 @@ class SensorMonitorApp(QMainWindow):
                 border-left: 1px solid #ced4da;
                 padding: 0px 4px 0px 4px;
                 font-size: 9px;
+                color: black;
             }
             QPushButton#spinbox_button_up:hover, QPushButton#spinbox_button_down:hover {
                 background-color: #e9ecef;

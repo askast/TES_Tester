@@ -1,13 +1,13 @@
 # TES Sensor Monitor
 
-A modern GUI application for monitoring sensors through NIDAQ using VISA interface.
+A modern web-based GUI application for monitoring sensors through NIDAQ using VISA interface.
 
 ## Features
 
-- **Modern PySide6 GUI** with dark theme
+- **Modern NiceGUI Web Interface** with responsive design
 - **VISA/NIDAQ Integration** for hardware communication
 - **Dynamic Sensor Management** - Add/remove sensors at runtime
-- **Real-time Plotting** with pyqtgraph for high performance
+- **Real-time Plotting** with interactive charts
 - **Adjustable Acquisition Frequency** from 0.1 Hz to 1000 Hz
 - **Data Recording** with CSV export
 - **Multi-sensor Support** with individual scaling and units
@@ -36,7 +36,7 @@ python main.py
    - **Name**: Unique identifier for the sensor
    - **Channel**: Hardware channel (e.g., "ai0", "ai1")
    - **Command**: SCPI command for reading (optional)
-   - **Unit**: Measurement unit (V, A, °C, etc.)
+   - **Unit**: Measurement unit (V, A, ï¿½C, etc.)
    - **Scale**: Multiplier for raw values
 2. Click "Add Sensor"
 
@@ -49,12 +49,10 @@ python main.py
 
 ## Dependencies
 
-- PySide6 >= 6.5.0 - Modern Qt GUI framework
+- NiceGUI >= 1.4.0 - Modern web-based GUI framework
 - PyVISA >= 1.14.0 - VISA instrument control
-- matplotlib >= 3.7.0 - Additional plotting support
 - numpy >= 1.24.0 - Numerical computations
 - pandas >= 2.0.0 - Data manipulation and export
-- pyqtgraph >= 0.13.0 - High-performance real-time plotting
 
 ## Hardware Requirements
 
